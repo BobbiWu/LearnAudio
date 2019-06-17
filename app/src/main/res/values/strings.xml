@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LearnAudioAndVideo</string>
+    <string name="start_record">开始录音</string>
+    <string name="start_play">播放</string>
+</resources>
