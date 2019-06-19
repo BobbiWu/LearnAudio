@@ -75,11 +75,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btnPlay:
-                mAudioTrackPlay = new AudioTrackPlay();
-                mAudioTrackPlay.startPlay(filePath(PATH));
+                if(vPlay.getText().equals("播放")) {
+                    vPlay.setText("停止播放");
+                    mAudioTrackPlay = new AudioTrackPlay();
+                    mAudioTrackPlay.startPlay(filePath(PATH));
+                }else {
+                    vPlay.setText("播放");
+                    mAudioTrackPlay.stopPaly();
+                }
                 break;
             case R.id.btnConvert:
-                mAudioTrackPlay.stopPaly();
+
                 break;
         }
     }
