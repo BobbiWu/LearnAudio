@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import android.media.AudioTrack;
 import android.util.Log;
 
@@ -33,7 +34,7 @@ public class AudioTrackPlay {
         }
         Log.e(TAG, "getMinBufferSize = " + minBufferSize + " bytes !");
         mAudioTrack = new AudioTrack(Config.DEFAULT_STREAM_TYPE, Config.SAMPLE_RATE_INHZ,
-            Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT, minBufferSize, Config.TRACK_PLAY_MODE);
+                Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT, minBufferSize, Config.TRACK_PLAY_MODE);
         if (mAudioTrack.getState() == AudioTrack.STATE_UNINITIALIZED) {
             Log.e(TAG, "AudioTrack initialize fail !");
             return;
@@ -57,6 +58,7 @@ public class AudioTrackPlay {
         //释放
         mAudioTrack.release();
         isPalying = false;
+        mBuffer=new byte[2048];
         Log.e(TAG, "Stop audio player success !");
     }
 
@@ -75,10 +77,10 @@ public class AudioTrackPlay {
                     if (readCount == AudioTrack.ERROR_BAD_VALUE || readCount == AudioTrack.ERROR_INVALID_OPERATION) {
                         continue;
                     }
-                    if (readCount != 0 && readCount != -1) {
+                    if (readCount != 0 && readCount != -1 && isPalying) {
                         mAudioTrack.write(mBuffer, 0, readCount);
+                        mAudioTrack.play();
                     }
-                    mAudioTrack.play();
                     Log.d(TAG, "OK, Played " + mBuffer + " bytes !");
                 }
             } catch (IOException e) {

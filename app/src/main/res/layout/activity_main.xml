@@ -25,5 +25,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_play"/>
+        <Button
+            android:id="@+id/btnWavPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_wav_play"/>
 
 </LinearLayout>

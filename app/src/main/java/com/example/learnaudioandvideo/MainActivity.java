@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,26 +18,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.example.learnaudioandvideo.PlayAudio.AudioRecorderHelper;
 import com.example.learnaudioandvideo.PlayAudio.AudioTrackPlay;
+import com.example.learnaudioandvideo.PlayAudio.ConvertHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int PERMISSIONS_REQUEST = 1;
 
     private static final String PATH = Environment.getExternalStorageDirectory() + "/Insane" + "/test.pcm";
 
-    private Button vStartRecord, vConvert, vPlay;
+    private static final String WAVPATH = Environment.getExternalStorageDirectory() + "/Insane" + "/test.wav";
+
+    private Button vStartRecord, vConvert, vPlay, vWavPlay;
 
     private AudioRecorderHelper recorderHelper;
 
     private AudioTrackPlay mAudioTrackPlay;
 
+    private ConvertHelper mConvertHelper;
+
     /*
      * 需要申请的权限
      * */
-    private String[] permissions = new String[] {
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    private String[] permissions = new String[]{
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     /**
      * 被用户拒绝的权限
@@ -52,10 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         vStartRecord = findViewById(R.id.btnStartRecord);
         vConvert = findViewById(R.id.btnConvert);
         vPlay = findViewById(R.id.btnPlay);
+        vWavPlay = findViewById(R.id.btnWavPlay);
 
         vStartRecord.setOnClickListener(this);
         vConvert.setOnClickListener(this);
         vPlay.setOnClickListener(this);
+        vWavPlay.setOnClickListener(this);
     }
 
     @Override
@@ -75,17 +84,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btnPlay:
-                if(vPlay.getText().equals("播放")) {
+                if (vPlay.getText().equals("播放")) {
                     vPlay.setText("停止播放");
                     mAudioTrackPlay = new AudioTrackPlay();
-                    mAudioTrackPlay.startPlay(filePath(PATH));
-                }else {
+                    File pcmFilePath = filePath(PATH);
+                    if (pcmFilePath == null) return;
+                    mAudioTrackPlay.startPlay(pcmFilePath);
+                } else {
                     vPlay.setText("播放");
                     mAudioTrackPlay.stopPaly();
                 }
                 break;
             case R.id.btnConvert:
-
+                mConvertHelper = new ConvertHelper();
+                File pcmFilePath = filePath(PATH);
+                if (pcmFilePath == null) return;
+//                mConvertHelper.pcmToWav(String.valueOf(pcmFilePath), String.valueOf(createFile(WAVPATH)));
+                mConvertHelper.pcmToWav(pcmFilePath, createFile(WAVPATH));
+                break;
+            case R.id.btnWavPlay:
+                if (vWavPlay.getText().equals("WAV播放")) {
+                    vWavPlay.setText("停止播放");
+                    mAudioTrackPlay = new AudioTrackPlay();
+                    File wavFilePath = filePath(WAVPATH);
+                    if (wavFilePath == null) return;
+                    mAudioTrackPlay.startPlay(wavFilePath);
+                } else {
+                    vWavPlay.setText("WAV播放");
+                    mAudioTrackPlay.stopPaly();
+                }
                 break;
         }
     }
@@ -103,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private File filePath(String path) {
         File tempFile = new File(path);
+        if (!tempFile.exists()) {
+            Toast.makeText(this, "请先录制PCM", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         Log.e("TAG--", String.valueOf(tempFile));
         return tempFile;
     }
@@ -111,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (int i = 0; i < permissions.length; i++) {
                 if (ContextCompat.checkSelfPermission(this, permissions[i]) !=
-                    PackageManager.PERMISSION_GRANTED) {
+                        PackageManager.PERMISSION_GRANTED) {
                     refusePermissionsList.add(permissions[i]);
                 }
             }
@@ -131,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     // Permission Denied 权限被拒绝
                     Toast.makeText(MainActivity.this, "Permission Denied",
-                        Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 break;
