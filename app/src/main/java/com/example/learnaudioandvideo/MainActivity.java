@@ -1,7 +1,6 @@
 package com.example.learnaudioandvideo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mConvertHelper = new ConvertHelper();
                 File pcmFilePath = filePath(PATH);
                 if (pcmFilePath == null) return;
-//                mConvertHelper.pcmToWav(String.valueOf(pcmFilePath), String.valueOf(createFile(WAVPATH)));
                 mConvertHelper.pcmToWav(pcmFilePath, createFile(WAVPATH));
                 break;
             case R.id.btnWavPlay:
