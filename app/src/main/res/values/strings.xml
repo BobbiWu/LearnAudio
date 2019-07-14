@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">LearnAudioAndVideo</string>
     <string name="start_record">开始录音</string>
-    <string name="start_play">播放</string>
+    <string name="start_play">PCM播放</string>
     <string name="start_wav_play">WAV播放</string>
+    <string name="btn_monster">怪兽</string>
+    <string name="btn_funny">搞怪</string>
 </resources>

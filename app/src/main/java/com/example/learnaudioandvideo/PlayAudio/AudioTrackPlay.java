@@ -8,48 +8,56 @@ import java.io.IOException;
 import android.media.AudioTrack;
 import android.util.Log;
 
+import com.example.learnaudioandvideo.PlayAudio.AudioEffect.AudioProcessor;
+
 public class AudioTrackPlay {
     private static final String TAG = AudioTrackPlay.class.getSimpleName();
 
     private AudioTrack mAudioTrack;
 
-    private volatile boolean isPalying;
+    private volatile boolean isPlaying;
 
     private File mFile;
 
     private Thread mThread;
 
-    private byte[] mBuffer;
+    private int ratio;
 
-    public void startPlay(File file) {
+    private AudioProcessor audioProcessor;
+
+    private int mMinBufferSize;//最小缓存大小
+
+    public void startPlay(File file, int ratio) {
         mFile = file;
-        if (isPalying) {
+        this.ratio = ratio;
+
+        if (isPlaying) {
             Log.e(TAG, "Player already started !");
             return;
         }
-        int minBufferSize = AudioTrack.getMinBufferSize(Config.SAMPLE_RATE_INHZ, Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT);
-        if (minBufferSize == AudioTrack.ERROR_BAD_VALUE) {
+        mMinBufferSize = AudioTrack.getMinBufferSize(Config.SAMPLE_RATE_INHZ, Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT);
+        if (mMinBufferSize == AudioTrack.ERROR_BAD_VALUE) {
             Log.e(TAG, "Invalid parameter !");
             return;
         }
-        Log.e(TAG, "getMinBufferSize = " + minBufferSize + " bytes !");
+        Log.e(TAG, "getMinBufferSize = " + mMinBufferSize + " bytes !");
         mAudioTrack = new AudioTrack(Config.DEFAULT_STREAM_TYPE, Config.SAMPLE_RATE_INHZ,
-                Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT, minBufferSize, Config.TRACK_PLAY_MODE);
+                Config.TRACK_CHANNEL_CONFIG, Config.ENCODING_FORMAT, mMinBufferSize, Config.TRACK_PLAY_MODE);
         if (mAudioTrack.getState() == AudioTrack.STATE_UNINITIALIZED) {
             Log.e(TAG, "AudioTrack initialize fail !");
             return;
         }
 
-        mBuffer = new byte[minBufferSize];
+        audioProcessor = new AudioProcessor(2048);
 
-        isPalying = true;
+        isPlaying = true;
 
         mThread = new Thread(new AudioTrackRunnable());
         mThread.start();
     }
 
-    public void stopPaly() {
-        if (!isPalying) {
+    public void stopPlay() {
+        if (!isPlaying) {
             return;
         }
         if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
@@ -57,8 +65,7 @@ public class AudioTrackPlay {
         }
         //释放
         mAudioTrack.release();
-        isPalying = false;
-        mBuffer=new byte[2048];
+        isPlaying = false;
         Log.e(TAG, "Stop audio player success !");
     }
 
@@ -66,22 +73,23 @@ public class AudioTrackPlay {
         @Override
         public void run() {
             FileInputStream inStream = null;
+            int readCount;
             try {
+                byte[] tempBuffer = new byte[mMinBufferSize];
                 inStream = new FileInputStream(mFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            try {
                 while (inStream.available() > 0) {
-                    int readCount = inStream.read(mBuffer);
+                    readCount = inStream.read(tempBuffer);
                     if (readCount == AudioTrack.ERROR_BAD_VALUE || readCount == AudioTrack.ERROR_INVALID_OPERATION) {
                         continue;
                     }
-                    if (readCount != 0 && readCount != -1 && isPalying) {
-                        mAudioTrack.write(mBuffer, 0, readCount);
+                    //对读到的流进行处理
+                    tempBuffer = ratio == 1 ? tempBuffer :
+                            audioProcessor.process(ratio, tempBuffer, Config.SAMPLE_RATE_INHZ);
+                    if (readCount != 0 && readCount != -1 && isPlaying) {
+                        mAudioTrack.write(tempBuffer, 0, readCount);
                         mAudioTrack.play();
                     }
-                    Log.d(TAG, "OK, Played " + mBuffer + " bytes !");
+                    Log.d(TAG, "OK, Played " + tempBuffer + " bytes !");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

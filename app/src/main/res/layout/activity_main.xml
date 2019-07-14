@@ -8,27 +8,44 @@
     tools:context=".MainActivity">
 
 
-        <Button
-            android:id="@+id/btnStartRecord"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/start_record"/>
+    <Button
+        android:id="@+id/btnStartRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_record" />
+
+    <Button
+        android:id="@+id/btnConvert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="pcm转wav" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_play" />
+
+    <Button
+        android:id="@+id/btnWavPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_wav_play" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btnConvert"
-            android:layout_width="match_parent"
+            android:id="@+id/btnFunny"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="pcm转wav"/>
+            android:text="@string/btn_funny"/>
 
         <Button
-            android:id="@+id/btnPlay"
-            android:layout_width="match_parent"
+            android:id="@+id/btnMonster"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_play"/>
-        <Button
-            android:id="@+id/btnWavPlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/start_wav_play"/>
-
+            android:text="@string/btn_monster"/>
+    </LinearLayout>
 </LinearLayout>

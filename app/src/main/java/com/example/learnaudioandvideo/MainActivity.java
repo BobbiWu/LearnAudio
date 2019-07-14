@@ -29,13 +29,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String WAVPATH = Environment.getExternalStorageDirectory() + "/Insane" + "/test.wav";
 
-    private Button vStartRecord, vConvert, vPlay, vWavPlay;
+    private Button vStartRecord, vConvert, vPlay, vWavPlay, vConvertFunny, vConvertMonster;
 
     private AudioRecorderHelper recorderHelper;
 
     private AudioTrackPlay mAudioTrackPlay;
 
     private ConvertHelper mConvertHelper;
+
+    private int ratio = 2;
 
     /*
      * 需要申请的权限
@@ -59,11 +61,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         vConvert = findViewById(R.id.btnConvert);
         vPlay = findViewById(R.id.btnPlay);
         vWavPlay = findViewById(R.id.btnWavPlay);
+        vConvertFunny = findViewById(R.id.btnFunny);
+        vConvertMonster = findViewById(R.id.btnMonster);
 
         vStartRecord.setOnClickListener(this);
         vConvert.setOnClickListener(this);
         vPlay.setOnClickListener(this);
         vWavPlay.setOnClickListener(this);
+        vConvertMonster.setOnClickListener(this);
+        vConvertFunny.setOnClickListener(this);
     }
 
     @Override
@@ -88,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mAudioTrackPlay = new AudioTrackPlay();
                     File pcmFilePath = filePath(PATH);
                     if (pcmFilePath == null) return;
-                    mAudioTrackPlay.startPlay(pcmFilePath);
+                    mAudioTrackPlay.startPlay(pcmFilePath, ratio);
                 } else {
                     vPlay.setText("播放");
-                    mAudioTrackPlay.stopPaly();
+                    mAudioTrackPlay.stopPlay();
                 }
                 break;
             case R.id.btnConvert:
@@ -106,11 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mAudioTrackPlay = new AudioTrackPlay();
                     File wavFilePath = filePath(WAVPATH);
                     if (wavFilePath == null) return;
-                    mAudioTrackPlay.startPlay(wavFilePath);
+                    mAudioTrackPlay.startPlay(wavFilePath, ratio);
                 } else {
                     vWavPlay.setText("WAV播放");
-                    mAudioTrackPlay.stopPaly();
+                    mAudioTrackPlay.stopPlay();
                 }
+                break;
+            case R.id.btnFunny:
+                ratio = 2;
+                break;
+            case R.id.btnMonster:
+                ratio = 1;
                 break;
         }
     }
