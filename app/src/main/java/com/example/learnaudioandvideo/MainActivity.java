@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ConvertHelper mConvertHelper;
 
-    private int ratio = 2;
+    private float ratio = 2;
 
     /*
      * 需要申请的权限
@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btnPlay:
-                if (vPlay.getText().equals("播放")) {
+                if (vPlay.getText().equals("PCM播放")) {
                     vPlay.setText("停止播放");
                     mAudioTrackPlay = new AudioTrackPlay();
                     File pcmFilePath = filePath(PATH);
                     if (pcmFilePath == null) return;
                     mAudioTrackPlay.startPlay(pcmFilePath, ratio);
                 } else {
-                    vPlay.setText("播放");
+                    vPlay.setText("PCM播放");
                     mAudioTrackPlay.stopPlay();
                 }
                 break;
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ratio = 2;
                 break;
             case R.id.btnMonster:
-                ratio = 1;
+                ratio = 0.5f;
                 break;
         }
     }

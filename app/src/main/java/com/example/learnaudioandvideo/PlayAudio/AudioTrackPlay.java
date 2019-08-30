@@ -21,13 +21,13 @@ public class AudioTrackPlay {
 
     private Thread mThread;
 
-    private int ratio;
+    private float ratio;
 
     private AudioProcessor audioProcessor;
 
     private int mMinBufferSize;//最小缓存大小
 
-    public void startPlay(File file, int ratio) {
+    public void startPlay(File file, float ratio) {
         mFile = file;
         this.ratio = ratio;
 
